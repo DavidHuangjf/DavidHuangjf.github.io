@@ -271,6 +271,125 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/08/rac-linux6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Huang jinfa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="重塑自我">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/08/rac-linux6/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-08T12:28:11+08:00">
+                2017-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>若表决磁盘所在磁盘组属性为EXTERNAL,为一块,若为NORMAL,则需要三块,若为HIGH,则需要五块,需要为奇数,这是为了发生脑裂时,用于表决。</p>
+<p>1、安裝oracle RAC所需的linux軟件包<br>[root@note1~] # yum –y install binutils<em> compat-libstdc++</em> elfutils-libelf<em> elfutils-libelf-devel</em> compat-libcap1 <em><br>elfutils-libelf-devel-static</em> gcc<em> gcc-c++</em> glibc<em> glibc-common</em> glibc-devel<em> glibc-headers</em> ksh<em> libaio</em> libaio-devel<em><br>libgcc</em>libgomp<em> libstdc++</em> libstdc++-devel<em> make</em> sysstat<em> unixODBC </em> unixODBC-devel*<br>节点二上执行相同的命令,将所需的包安装上。</p>
+<p>2.这里使用集群时间同步服务(CTSS),需要卸载网络时间协议(NTP)<br>service ntpd stop<br>chkconfig –level 2345 ntpd off<br>mv /etc/ntp.conf /etc/ntp.conf.bak<br>rm –rf /etc/ntp.conf<br>在集群安装完后,要确认ctssd是否处于活动状态<br>[grid@note1 ~] #crsctl check ctss</p>
+<p>3.配置内核参数<br>sh configure.sh </p>
+<p>4.创建RAC相关权限组,用户和目录<br>groupadd oinstall<br>groupadd asmadmin<br>groupadd asmdba<br>groupadd asmoper<br>groupadd dba<br>groupadd oper</p>
+<p>useradd -g oinstall -G asmadmin,asmdba,asmoper grid<br>passwd grid<br>节点一ORACLE_SID=+ASM1<br>编辑grid用户的环境配置文件(~/.bash_profile),加入如下内容<br>export PS1=”<code>/bin/hostname -s</code>-&gt; “<br>export TMP=/tmp<br>export TMPDIR=$TMP<br>export ORACLE_SID=+ASM1 #节点二为+ASM2,节点三为+ASM3<br>export ORACLE_BASE=/u/app/grid<br>export ORACLE_HOME=/u/app/11.2.0/grid<br>export ORACLE_TERM=xterm<br>export NLS_DATE_FORMAT=’yyyy/mm/dd hh24:mi:ss’<br>export TNS_ADMIN=$ORACLE_HOME/network/admin<br>export PATH=/usr/sbin:$PATH<br>export PATH=$ORACLE_HOME/bin:$PATH<br>export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib<br>exportCLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib<br>umask 022</p>
+<p>useradd -g oinstall -G dba,oper,asmdba oracle<br>passwd oracle<br>节点一:ORACLE_SID=racdb1<br>编辑oracle用户的环境配置文件(~/.bash_profile),加入如下内容<br>export TMP=/tmp<br>export TMPDIR=$TMP<br>export ORACLE_SID=racdb1 #节点二为racdb2,节点三为racdb3<br>export ORACLE_BASE=/u/app/oracle<br>export ORACLE_HOME=$ORACLE_BASE/product/11.2.0/db_1<br>export ORACLE_UNQNAME=racdb<br>export TNS_ADMIN=$ORACLE_HOME/network/admin<br>export ORACLE_TERM=xterm<br>export PATH=/usr/sbin:$PATH<br>export PATH=$ORACLE_HOME/bin:$PATH<br>exportLD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib:$ORACLE_HOME/jdbc/lib<br>exportCLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib<br>export NLS_DATE_FORMAT=’yyyy/mm/dd hh24:mi:ss’<br>umask 022</p>
+<p>mkdir -p /u/app/grid<br>mkdir -p /u/app/11.2.0/grid<br>chown -R grid:oinstall /u/app<br>mkdir -p /u/app/oracle<br>chown oracle:oinstall /u/app/oracle<br>chmod -R 775 /u</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/20/rac/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1504,7 +1623,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
